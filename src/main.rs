@@ -4,6 +4,8 @@ use std::{
     time::Duration,
 };
 
+use clearscreen::clear;
+
 struct Model {
     counter: i32
 }
@@ -28,6 +30,7 @@ impl View {
     }
 
     fn render_view(&self, model: &mut Model) {
+        clear().expect("failed to clear screen");
         println!("Rendering View {}", model.counter);
     }
 }
