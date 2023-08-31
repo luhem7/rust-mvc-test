@@ -4,20 +4,31 @@ use std::{
     time::Duration,
 };
 
-struct View {
+struct Model {
     counter: i32
 }
 
-impl View {
+impl Model {
     fn new() -> Self {
         Self {
             counter: 0
         }
     }
 
-    fn render_view(&mut self) {
-        println!("Rendering View {}", self.counter);
+    fn increment_counter(&mut self) {
         self.counter += 1;
+    }
+}
+
+struct View;
+
+impl View {
+    fn new() -> Self {
+        Self
+    }
+
+    fn render_view(&self, model: &mut Model) {
+        println!("Rendering View {}", model.counter);
     }
 }
 
@@ -27,9 +38,14 @@ fn main() {
     let view_arc = Arc::new(Mutex::new(View::new()));
     let view_arc_clone = Arc::clone(&view_arc);
 
+    let model_arc = Arc::new(Mutex::new(Model::new()));
+    let model_arc_clone = Arc::clone(&model_arc);
+
     loop {
-        let mut view = view_arc_clone.lock().unwrap();
-        view.render_view();
+        let view = view_arc_clone.lock().unwrap();
+        let mut model = model_arc_clone.lock().unwrap();
+        model.increment_counter();
+        view.render_view(&mut model);
         thread::sleep(Duration::from_millis(1000));
     }
 
